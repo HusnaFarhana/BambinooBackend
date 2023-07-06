@@ -3,13 +3,12 @@ const Staff = require("../model/staffModel");
 const Kids = require("../model/babyModel");
 const Plan = require("../model/subscriptonModel");
 const User = require("../model/userModel");
-
+const Chat = require("../model/chatModel");
 
 const postAdminLogin = async (req, res) => {
   try {
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPass = process.env.ADMIN_PASSWORD;
-
     const verifyEmail = req.body.email;
     const verifyPass = req.body.password;
 
@@ -26,6 +25,8 @@ const postAdminLogin = async (req, res) => {
   }
 };
 
+
+
 const addTutor = async (req, res) => {
   try {
     const result = await Staff({
@@ -36,34 +37,42 @@ const addTutor = async (req, res) => {
       address: req.body.address,
       contact: req.body.contact,
       adharNo: req.body.adhar,
-      image:req.body.image
+      image: req.body.image,
     });
-   await result.save();
-
+    await result.save();
     res.status(200).json({ status: true });
   } catch (error) {
     console.log(error.message);
   }
 };
+
+
+
 const viewStaffs = async (req, res) => {
   try {
-    const staffs = await Staff.find().populate('kids');
+    const staffs = await Staff.find().populate("kids");
     res.status(200).json({ staffs });
   } catch (error) {
     console.log(error.message);
   }
 };
+
+
+
 const getKids = async (req, res) => {
   try {
     const kids = await Kids.find()
       .populate("staff")
-      .populate('parent')
-      .populate('subscription');
+      .populate("parent")
+      .populate("subscription");
     res.status(200).json({ kids });
   } catch (error) {
     console.log(error.message);
   }
 };
+
+
+
 const addPlan = async (req, res) => {
   try {
     const result = await Plan({
@@ -79,6 +88,9 @@ const addPlan = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+
 const tutorProfile = async (req, res) => {
   try {
     const id = req.params.data;
@@ -88,6 +100,9 @@ const tutorProfile = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+
 const getPlans = async (req, res) => {
   try {
     const plans = await Plan.find();
@@ -96,10 +111,16 @@ const getPlans = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+
 const getUsers = async (req, res) => {
   const users = await User.find();
   res.status(200).json({ users });
 };
+
+
+
 const getDash = async (req, res) => {
   try {
     const data = {};
@@ -107,46 +128,51 @@ const getDash = async (req, res) => {
     data.kids = await Kids.countDocuments();
     data.plans = await Plan.countDocuments();
     data.staffs = await Staff.countDocuments();
-    const baby = await Kids.find().populate('subscription.id');
-    
-   const total = await Kids.aggregate([
-     {
-       $lookup: {
-         from: "subscriptions",
-         localField: "subscription.id",
-         foreignField: "_id",
-         as: "subscriptionData",
-       },
-     },
-     {
-       $unwind: "$subscriptionData",
-     },
-     {
-       $group: {
-         _id: null,
-         total: { $sum: "$subscriptionData.price" },
-       },
-     },
-   ]).exec();
-    data.totalRevenue = total[0].total;
+    await Kids.find().populate("subscription.id");
 
+    const total = await Kids.aggregate([
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "subscription.id",
+          foreignField: "_id",
+          as: "subscriptionData",
+        },
+      },
+      {
+        $unwind: "$subscriptionData",
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$subscriptionData.price" },
+        },
+      },
+    ]).exec();
+    data.totalRevenue = total[0].total;
     res.status(200).json({ data });
   } catch (error) {
     console.log(error.message);
   }
 };
+
+
+
 const getBabyProfile = async (req, res) => {
   try {
     const id = req.params.id;
     const data = await Kids.findOne({ _id: id })
       .populate("parent")
-      .populate('staff')
-      .populate('subscription');
+      .populate("staff")
+      .populate("subscription");
     res.status(200).json({ data: data });
   } catch (error) {
     console.log(error.message);
   }
 };
+
+
+
 const allot = async (req, res) => {
   try {
     await Kids.findByIdAndUpdate(req.body.babyid, {
@@ -171,6 +197,8 @@ const allot = async (req, res) => {
   }
 };
 
+
+
 const editTutor = async (req, res) => {
   try {
     const upd = await Staff.findByIdAndUpdate(
@@ -193,6 +221,8 @@ const editTutor = async (req, res) => {
   }
 };
 
+
+
 const getAPlan = async (req, res) => {
   try {
     const id = req.params.id;
@@ -202,6 +232,9 @@ const getAPlan = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+
 const editPlan = async (req, res) => {
   try {
     await Plan.findByIdAndUpdate(req.body.id, {
@@ -219,9 +252,11 @@ const editPlan = async (req, res) => {
   }
 };
 
+
+
 const deleteStaff = async (req, res) => {
   try {
-    const deletedStaff = await Staff.deleteOne({_id:req.params.id});
+    const deletedStaff = await Staff.deleteOne({ _id: req.params.id });
     const result = await Kids.updateMany(
       { staff: req.params.id },
       { staff: null }
@@ -232,15 +267,32 @@ const deleteStaff = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
+
 const payments = async (req, res) => {
   try {
-    const data = await Kids.find().populate('parent').populate('subscription.id');
-    res.status(200).json({ data:data})
+    const data = await Kids.find()
+      .populate("parent")
+      .populate("subscription.id");
+    res.status(200).json({ data: data });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
+
+const getChatHistory = async (req, res) => {
+  try {
+    const chats = await Chat.find().limit(50);
+    res.status(200).json({ chat: chats });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 
 module.exports = {
   postAdminLogin,
@@ -259,4 +311,5 @@ module.exports = {
   editPlan,
   deleteStaff,
   payments,
+  getChatHistory,
 };

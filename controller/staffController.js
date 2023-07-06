@@ -35,36 +35,38 @@ const staffLogin = async (req, res) => {
 };
 
 
+
 const myProfile=async(req,res)=>{
   try {
     const id=req.params.data
     const staff = await Staff.findOne({ _id: id })
     res.status(200).json({staff:staff})
   } catch (error) {
-        console.log(error.message);
-
+    console.log(error.message);
   }
 }
 
+
+
 const getPupils = async (req, res) => {
   try {
-
     const id = req.params.id;
     const data=await Baby.find({staff:id,active:true}).populate('parent')
     res.status(200).json({ data: data });
   } catch (error) {
-        console.log(error.message);
-
+    console.log(error.message);
   }
 };
+
+
+
 const singleKid = async (req, res) => {
   try {
     const id = req.params.id;
     const data = await Baby.findById(id).populate('parent')
     res.status(200).json({ data: data });
   } catch (error) {
-        console.log(error.message);
-
+    console.log(error.message);
   }
 };
 module.exports = {

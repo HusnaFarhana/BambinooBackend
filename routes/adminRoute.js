@@ -2,20 +2,28 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controller/adminController");
 
-router.post("/adminLogin", adminController.postAdminLogin);
-router.post("/addTutor", adminController.addTutor);
+
+//-------------------GET---------------------------
 router.get("/getTutors", adminController.viewStaffs);
 router.get("/getkids", adminController.getKids);
-router.post("/addplan", adminController.addPlan);
-router.get("/tutors/tutorprofile/:data", adminController.tutorProfile);
 router.get("/getplans", adminController.getPlans);
+router.get("/tutors/tutorprofile/:data", adminController.tutorProfile);
 router.get("/getusers", adminController.getUsers);
 router.get("/getdash", adminController.getDash);
 router.get("/kids/profile/:id", adminController.getBabyProfile);
-router.post("/allot", adminController.allot);
-router.post("/edittutor", adminController.editTutor);
 router.get("/getplan/:id", adminController.getAPlan);
-router.post("/editplan", adminController.editPlan);
 router.get("/deletestaff/:id", adminController.deleteStaff);
 router.get("/payments", adminController.payments);
+router.get("/chathistory", adminController.getChatHistory);
+
+
+//-------------------POST--------------------------
+router.post("/adminLogin", adminController.postAdminLogin);
+router.post("/addTutor", adminController.addTutor);
+router.post("/addplan", adminController.addPlan);
+router.post("/allot", adminController.allot);
+router.post("/edittutor", adminController.editTutor);
+router.post("/editplan", adminController.editPlan);
+
+
 module.exports = router;
