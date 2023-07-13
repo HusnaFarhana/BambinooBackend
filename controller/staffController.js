@@ -1,9 +1,7 @@
 const Staff = require("../model/staffModel");
-const User = require("../model/userModel");
 const Baby = require("../model/babyModel");
-const Plan = require("../model/subscriptonModel");
 const jwt = require("jsonwebtoken");
-const { ObjectId } = require("mongodb");
+
 
 const staffLogin = async (req, res) => {
   try {
@@ -69,9 +67,11 @@ const singleKid = async (req, res) => {
     console.log(error.message);
   }
 };
+
 module.exports = {
   staffLogin,
   myProfile,
   getPupils,
   singleKid,
+  
 };

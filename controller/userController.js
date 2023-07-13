@@ -72,14 +72,12 @@ const userRegister = async (req, res) => {
 
 const getNav = async (req, res) => {
   try {
-    const data = await User.findById(req.params.id)
-    res.status(200).json({data:data})
+    const data = await User.findById(req.params.id);
+    res.status(200).json({ data: data });
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
   }
-}
-
-
+};
 
 const logout = async (req, res) => {
   try {
@@ -92,8 +90,6 @@ const logout = async (req, res) => {
     console.log(error.message);
   }
 };
-
-
 
 const registerKid = async (req, res) => {
   try {
@@ -114,7 +110,7 @@ const registerKid = async (req, res) => {
         id: req.body.plan.id,
         date: new Date(),
         expDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-        paymentid:req.body.paymentid
+        paymentid: req.body.paymentid,
       },
       image: imageUrl,
       parent: req.body.user,
@@ -132,8 +128,6 @@ const registerKid = async (req, res) => {
     console.log(error.message);
   }
 };
-
-
 
 const userLogin = async (req, res) => {
   try {
@@ -170,27 +164,26 @@ const otpLogin = async (req, res) => {
     const mobile = req.body.phone;
     const user = await User.findOne({ contact: req.body.phone });
     if (!user) {
-      res.status(401).json({ message: "cannot find user with this phone number" });
+      res
+        .status(401)
+        .json({ message: "cannot find user with this phone number" });
     } else {
-       client.verify.v2
-         .services(serviceId)
-         .verifications.create({ to: `+91${mobile}`, channel: "sms" })
-         .then((verification) => {
-           console.log(verification.status);
+      client.verify.v2
+        .services(serviceId)
+        .verifications.create({ to: `+91${mobile}`, channel: "sms" })
+        .then((verification) => {
+          console.log(verification.status);
+        })
+        .catch((error) => {
+          console.error("Twilio verification request error:", error);
+        });
 
-         })
-         .catch((error) => {
-           console.error("Twilio verification request error:", error);
-
-         });
-      
-     res.status(200).json({success:true,data:req.body.phone})
+      res.status(200).json({ success: true, data: req.body.phone });
     }
   } catch (err) {
     console.log(err);
   }
 };
-
 
 const userProfile = async (req, res) => {
   try {
@@ -202,8 +195,6 @@ const userProfile = async (req, res) => {
     console.log(error);
   }
 };
-
-
 
 const myKids = async (req, res) => {
   try {
@@ -217,8 +208,6 @@ const myKids = async (req, res) => {
     console.log(error);
   }
 };
-
-
 
 const updateUser = async (req, res) => {
   try {
@@ -239,8 +228,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-
-
 const babyprofile = async (req, res) => {
   try {
     const id = req.params.data;
@@ -253,36 +240,38 @@ const babyprofile = async (req, res) => {
   }
 };
 
-
 function generateToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-
 const verifyOtpLogin = async (req, res) => {
-const otp = req.body.otp;
-const mob = req.body.phone;
+  const otp = req.body.otp;
+  const mob = req.body.phone;
 
-    client.verify.v2
-      .services(serviceId)
-      .verificationChecks.create({ to: `+91${mob}`, code: otp })
-      .then(async (verification_check) => {
-        console.log(verification_check.status);
-        if (verification_check.status === "approved") {
-          const token = generateToken();
-          const user = await User.findOneAndUpdate({ contact: mob },
-          {$set:{crypto:token}})
-          res.status(200).json({ success: true ,data:{phone:mob,token:token}});
-        } else {
-          res.status(400).json({ success: false, message: "invalid otp" });
-        }
-      })
-      .catch((error) => {
-        console.error("Twilio verification check error:", error);
+  client.verify.v2
+    .services(serviceId)
+    .verificationChecks.create({ to: `+91${mob}`, code: otp })
+    .then(async (verification_check) => {
+      console.log(verification_check.status);
+      if (verification_check.status === "approved") {
+        const token = generateToken();
+        const user = await User.findOneAndUpdate(
+          { contact: mob },
+          { $set: { crypto: token } }
+        );
         res
-          .status(500)
-          .json({ success: false, message: "Verification check failed" });
-      });
+          .status(200)
+          .json({ success: true, data: { phone: mob, token: token } });
+      } else {
+        res.status(400).json({ success: false, message: "invalid otp" });
+      }
+    })
+    .catch((error) => {
+      console.error("Twilio verification check error:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Verification check failed" });
+    });
 };
 
 const verifyotp = async (req, res) => {
@@ -309,7 +298,7 @@ const verifyotp = async (req, res) => {
           const userData = await user.save();
           const token = jwt.sign(
             { name: userData.name, userid: userData._id },
-              process.env.JWT_CODE,
+            process.env.JWT_CODE,
             {
               expiresIn: "1h",
             }
@@ -339,18 +328,14 @@ const verifyotp = async (req, res) => {
   }
 };
 
-
-
 const getHome = async (req, res) => {
   try {
-    const plans = await Plan.find();
+    const plans = await Plan.find({active:true});
     res.status(200).json({ plans: plans });
   } catch (error) {
     console.log(error.message);
   }
 };
-
-
 
 const editBaby = async (req, res) => {
   try {
@@ -371,21 +356,17 @@ const editBaby = async (req, res) => {
   }
 };
 
-
-
 const deleteBaby = async (req, res) => {
   try {
-     await Baby.findOneAndUpdate(
-       { _id: req.body.id },
-       { $set: { active: false, "subscription.active": false } }
-     );
+    await Baby.findOneAndUpdate(
+      { _id: req.body.id },
+      { $set: { active: false, "subscription.active": false } }
+    );
     res.status(200).json({ success: true });
   } catch (error) {
     console.log(error.message);
   }
 };
-
-
 
 const removeExpiredSubscriptions = async () => {
   try {
@@ -401,7 +382,45 @@ const removeExpiredSubscriptions = async () => {
     console.log(error.message);
   }
 };
+const validateToken = async (req, res) => {
+  try {
+    const token = req.body.token;
+    const user = await User.findOne({ crypto: token });
+    console.log(user, "user with crypto");
+    if (user) {
+      res.status(200).json({ success: true });
+    } else {
+      res
+        .status(200)
+        .json({ success: "false", message: "Verification check failed" });
+    }
+  } catch (error) {}
+};
+const reset = async (req, res) => {
+  try {
 
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(
+      req.body.data.password.password,
+      salt
+    );
+    
+    const user = await User.findOneAndUpdate(
+      { crypto: req.body.data.token },
+      {
+        $set: { password: hashedPassword, crypto: "" },
+      }
+    );
+
+    if (user) {
+      res.status(200).json({ success: true });
+    } else {
+      res
+        .status(200)
+        .json({ success: "false", message: "Verification check failed" });
+    }
+  } catch (error) {}
+};
 setInterval(removeExpiredSubscriptions, 6 * 60 * 60 * 1000);
 
 module.exports = {
@@ -420,4 +439,6 @@ module.exports = {
   deleteBaby,
   otpLogin,
   verifyOtpLogin,
+  validateToken,
+  reset,
 };

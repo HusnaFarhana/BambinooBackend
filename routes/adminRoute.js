@@ -15,6 +15,7 @@ router.get("/getplan/:id", adminController.getAPlan);
 router.get("/deletestaff/:id", adminController.deleteStaff);
 router.get("/payments", adminController.payments);
 router.get("/chathistory", adminController.getChatHistory);
+router.get("/deleteplan/:id", adminController.deletePlan);
 
 
 //-------------------POST--------------------------

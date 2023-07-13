@@ -88,11 +88,11 @@ app.use("/", userRouter);
 app.use("/admin", adminRouter);
 app.use("/staff", staffRouter);
 
-mongoose.connect("mongodb://127.0.0.1:27017/bambino");
+mongoose.connect(process.env.mongoDB);
 
 mongoose.connection.on("connected", () => {
   console.log("connected to mongo db");
-});
+});       
 
 app.listen(port, () => {
   console.log("listening on port 3500");

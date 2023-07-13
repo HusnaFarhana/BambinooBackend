@@ -21,6 +21,8 @@ router.post("/verify", userController.verifyotp);
 router.post("/logout", userController.logout);
 router.post("/mykids/editbaby", userController.editBaby);
 router.post("/mykids/deletebaby", userController.deleteBaby);
+router.post("/validatetoken", userController.validateToken);
+router.post("/reset", userController.reset);
 
 
 module.exports = router;

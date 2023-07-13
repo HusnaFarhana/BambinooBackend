@@ -21,6 +21,10 @@ const subscriptionSchema = new mongoose.Schema({
     }],
   athome:{
     type:String
+  },
+  active: {
+    type: Boolean,
+    default:true,
   }
 });
 

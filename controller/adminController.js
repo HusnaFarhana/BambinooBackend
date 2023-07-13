@@ -256,8 +256,8 @@ const editPlan = async (req, res) => {
 
 const deleteStaff = async (req, res) => {
   try {
-    const deletedStaff = await Staff.deleteOne({ _id: req.params.id });
-    const result = await Kids.updateMany(
+     await Staff.deleteOne({ _id: req.params.id });
+     await Kids.updateMany(
       { staff: req.params.id },
       { staff: null }
     );
@@ -293,6 +293,17 @@ const getChatHistory = async (req, res) => {
   }
 };
 
+const deletePlan = async (req, res) => {
+  try {
+    const id=req.params.id
+    const upd=await Plan.findByIdAndUpdate(id ,{$set:{active:false}})
+  res.sendStatus(200);
+  } catch (error) {
+    console.log(error.message);
+      res.sendStatus(500);
+  }
+};
+
 
 module.exports = {
   postAdminLogin,
@@ -312,4 +323,5 @@ module.exports = {
   deleteStaff,
   payments,
   getChatHistory,
+  deletePlan,
 };
