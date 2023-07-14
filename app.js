@@ -4,10 +4,16 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const Chat = require("./model/chatModel");
 const cron = require("node-cron");
+const http = require('http')
+const path = require("path");
+const bodyParser = require("body-parser");
+const app = express();
+const server = http.createServer(app);
 
-const io = require("socket.io")(4000, {
+const io = require("socket.io")(server, {
   cors: {
-    origin: ["http://localhost:4200"],
+    // origin: ["http://localhost:4200"],
+    origin: ["https://bambinokids.netlify.app/"],
   },
 });
 
@@ -17,7 +23,7 @@ cron.schedule("0 0 * * *", async () => {
     const excessChats = chatCount - 50;
     if (excessChats > 0) {
       const chatsToDelete = await Chat.find().limit(excessChats);
-      await Chat.deleteMany({
+      await Chat.deleteMany({     
         _id: { $in: chatsToDelete.map((chat) => chat._id) },
       });
     }
@@ -26,9 +32,6 @@ cron.schedule("0 0 * * *", async () => {
   }
 });
 
-const path = require("path");
-const bodyParser = require("body-parser");
-const app = express();
 
 io.on("connection", (socket) => {
   socket.on("user-joined", ({ username }) => {
@@ -69,7 +72,8 @@ app.options("*", cors());
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:4200"],
+    // origin: ["http://localhost:4200"],
+    origin: ["https://bambinokids.netlify.app/"],
   })
 );
 
@@ -91,9 +95,9 @@ app.use("/staff", staffRouter);
 mongoose.connect(process.env.mongoDB);
 
 mongoose.connection.on("connected", () => {
-  console.log("connected to mongo db");
+  console.log("connected to mongo db");      
 });       
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("listening on port 3500");
 });

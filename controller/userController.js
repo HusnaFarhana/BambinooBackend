@@ -70,6 +70,8 @@ const userRegister = async (req, res) => {
   }
 };
 
+
+
 const getNav = async (req, res) => {
   try {
     const data = await User.findById(req.params.id);
