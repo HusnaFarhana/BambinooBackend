@@ -11,7 +11,6 @@ const postAdminLogin = async (req, res) => {
     const adminPass = process.env.ADMIN_PASSWORD;
     const verifyEmail = req.body.email;
     const verifyPass = req.body.password;
-
     if (verifyEmail !== adminEmail || verifyPass !== adminPass) {
       res.status(401).json({ message: "invalid Credentials" });
     } else {
