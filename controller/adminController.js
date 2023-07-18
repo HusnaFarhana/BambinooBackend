@@ -28,6 +28,12 @@ const postAdminLogin = async (req, res) => {
 
 const addTutor = async (req, res) => {
   try {
+    const imageFile = req.body.image;
+
+    const uploadResult = await cloudinary.uploader.upload(imageFile, {
+      folder: "staff-images",
+    });
+     const imageUrl = uploadResult.secure_url;
     const result = await Staff({
       name: req.body.name,
       email: req.body.email,
@@ -36,7 +42,7 @@ const addTutor = async (req, res) => {
       address: req.body.address,
       contact: req.body.contact,
       adharNo: req.body.adhar,
-      image: req.body.image,
+      image: imageUrl,
     });
     await result.save();
     res.status(200).json({ status: true });
