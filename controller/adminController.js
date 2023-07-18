@@ -33,7 +33,8 @@ const addTutor = async (req, res) => {
     const uploadResult = await cloudinary.uploader.upload(imageFile, {
       folder: "kid-images",
     });
-     const imageUrl = uploadResult.secure_url;
+    const imageUrl = uploadResult.secure_url;
+    console.log(imageUrl,'tutor img')
     const result = await Staff({
       name: req.body.name,
       email: req.body.email,
