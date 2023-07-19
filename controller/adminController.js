@@ -5,6 +5,12 @@ const Plan = require("../model/subscriptonModel");
 const User = require("../model/userModel");
 const Chat = require("../model/chatModel");
 const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDNAME,
+  api_key: process.env.APIKEY,
+  api_secret: process.env.APISECRET,
+});
+
 
 const postAdminLogin = async (req, res) => {
   try {
@@ -31,11 +37,12 @@ const addTutor = async (req, res) => {
   try {
     const imageFile = req.body.image;
 
-    const uploadResult = await cloudinary.uploader.upload(imageFile, {
-      folder: "kid-images",
-    });
-    const imageUrl = uploadResult.secure_url;
-    console.log(imageUrl,'tutor img')
+  const uploadResult = await cloudinary.uploader.upload(imageFile, {
+    folder: "kid-images",
+  });
+
+  const imageUrl = uploadResult.secure_url;
+
     const result = await Staff({
       name: req.body.name,
       email: req.body.email,
