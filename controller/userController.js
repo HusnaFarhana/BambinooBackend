@@ -423,6 +423,7 @@ const reset = async (req, res) => {
     }
   } catch (error) {}
 };
+
 setInterval(removeExpiredSubscriptions, 6 * 60 * 60 * 1000);
 
 module.exports = {
