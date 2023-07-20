@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 const io = require("socket.io")(server, {
   cors: {
-    origin: ["https://bambinokids.netlify.app"],
+    origin: [process.env.frontendUrl],
   },
 });
 
@@ -71,7 +71,7 @@ app.options("*", cors());
 app.use(
   cors({
     credentials: true,
-    origin: ["https://bambinokids.netlify.app"],
+    origin: [process.env.frontendUrl],
   })
 );
 
