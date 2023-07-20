@@ -163,7 +163,7 @@ const getDash = async (req, res) => {
         },
       },
     ]).exec();
-    data.totalRevenue = total[0].total;
+    data.totalRevenue = total[0]?.total??0;
     res.status(200).json({ data });
   } catch (error) {
     console.log(error.message);
